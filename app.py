@@ -12,6 +12,7 @@ redis = redis_heroku.from_url(os.environ.get("REDIS_URL"), charset="utf-8", deco
 
 @app.before_first_request
 def initialize():
+    setup.setup_logging(app)
     setup.setup_credentials()
 
 
@@ -33,7 +34,7 @@ def challenge():
 
     # capture events
     if 'event' in r:
-        slack.handle_event(r)
+        return slack.handle_event(r)
 
     logger.error("unknown event received")
     return r
