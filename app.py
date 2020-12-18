@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import logging
-import sys
 import os
 import requests
 from flask import Flask, request, jsonify
@@ -86,9 +85,4 @@ def send_message_to_slack(message):
 
 # main
 if __name__ == "__main__":
-    if 1 < len(sys.argv) and sys.argv[1] == "production":
-        # logging.basicConfig(level=logging.INFO)
-        app.run(host='0.0.0.0', port=5000)
-    else:
-        # logging.basicConfig(level=logging.DEBUG)
-        app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
