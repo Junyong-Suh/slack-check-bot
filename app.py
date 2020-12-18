@@ -11,19 +11,19 @@ redis = redis_heroku.from_url(os.environ.get("REDIS_URL"), charset="utf-8", deco
 
 
 @app.before_first_request
-def setup():
+def initialize():
     setup.setup_credentials()
 
 
 @app.route('/', methods=['GET'])
-def hello_world():
+def index():
     logger.info('Hello World!')
     return jsonify('Hello World!')
 
 
 # handles Slack's challenge
 @app.route('/challenge', methods=['POST'])
-def slack_challenge():
+def challenge():
     r = request.get_json()
     logger.info(r)
 
