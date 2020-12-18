@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
+import os
 import redis as redis_heroku
-import constants as c
 
 from libs import setup, logger, slack
 from flask import Flask, request, jsonify
 
 
 app = Flask(__name__)
-redis = redis_heroku.from_url(c.REDIS_URL, charset="utf-8", decode_responses=True)
+redis = redis_heroku.from_url(os.environ.get("REDIS_URL"), charset="utf-8", decode_responses=True)
 
 
 @app.before_first_request
