@@ -1,38 +1,23 @@
 # -*- coding: utf-8 -*-
-import logging
-import os
-import requests
+import redis as redis_heroku
+import constants as c
+
+from libs import setup, logger, slack
 from flask import Flask, request, jsonify
 
-app = Flask(__name__)
 
-SLACK_API_URL = "https://slack.com/api/chat.postMessage"
-SLACK_APP_TOKEN = ""
-KEYWORDS = ["done", "status"]
+app = Flask(__name__)
+redis = redis_heroku.from_url(c.REDIS_URL, charset="utf-8", decode_responses=True)
 
 
 @app.before_first_request
 def setup():
-    setup_logging()
-    setup_credentials()
-
-
-def setup_logging():
-    if not app.debug:
-        # In production mode, add log handler to sys.stderr.
-        app.logger.addHandler(logging.StreamHandler())
-        app.logger.setLevel(logging.INFO)
-
-
-def setup_credentials():
-    global SLACK_APP_TOKEN
-    if 'SLACK_APP_TOKEN' in os.environ:
-        SLACK_APP_TOKEN = f"Bearer {os.environ['SLACK_APP_TOKEN']}"
+    setup.setup_credentials()
 
 
 @app.route('/', methods=['GET'])
 def hello_world():
-    app.logger.info('Hello World!')
+    logger.info('Hello World!')
     return jsonify('Hello World!')
 
 
@@ -40,46 +25,17 @@ def hello_world():
 @app.route('/challenge', methods=['POST'])
 def slack_challenge():
     r = request.get_json()
-    app.logger.info(r)
+    logger.info(r)
 
+    # should respond to Slack's challenge
     if 'challenge' in r:
-        challenge = r['challenge']
-        return challenge
+        return r['challenge']
 
+    # capture events
     if 'event' in r:
-        event = parse_event(r['event'])
-        if has_keywords(event['text']):
-            message = {"channel": event['channel'], "text": event['text']}
-            send_message_to_slack(message)
-        return event
+        slack.handle_event(r)
 
-    app.logger.error("unknown event received")
-    return r
-
-
-def has_keywords(text):
-    for k in KEYWORDS:
-        if k in text:
-            return True
-    return False
-
-
-def parse_event(event):
-    app.logger.info(event)
-    return {
-        'user': event['user'],
-        'text': event['text'],
-        'channel': event['channel']  # G01G1PQ91NE
-    }
-
-
-def send_message_to_slack(message):
-    r = requests.post(
-        url=SLACK_API_URL,
-        json=message,
-        headers={"Authorization": SLACK_APP_TOKEN}
-    )
-    app.logger.info(r.json())
+    logger.error("unknown event received")
     return r
 
 
