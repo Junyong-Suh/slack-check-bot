@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
-import os
-import redis as redis_heroku
-
 from libs import setup, logger, slack
 from flask import Flask, request, jsonify
 
-
 app = Flask(__name__)
-redis = redis_heroku.from_url(os.environ.get("REDIS_URL"), charset="utf-8", decode_responses=True)
 
 
 @app.before_first_request
@@ -17,7 +12,7 @@ def initialize():
 
 @app.route('/', methods=['GET'])
 def index():
-    logger.error('Hello World!')
+    logger.info('Hello World!')
     return jsonify('Hello World!')
 
 
@@ -25,7 +20,7 @@ def index():
 @app.route('/challenge', methods=['POST'])
 def challenge():
     r = request.get_json()
-    logger.error(r)
+    logger.info(r)
 
     # should respond to Slack's challenge
     if 'challenge' in r:
