@@ -12,7 +12,6 @@ redis = redis_heroku.from_url(os.environ.get("REDIS_URL"), charset="utf-8", deco
 
 @app.before_first_request
 def initialize():
-    setup.setup_logging(app)
     setup.setup_credentials()
 
 
