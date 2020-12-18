@@ -35,7 +35,7 @@ def send_message(message):
     response = requests.post(
         url=c.SLACK_API_URL,
         json=message,
-        headers={"Authorization": c.SLACK_APP_TOKEN}
+        headers={"Authorization": c.SLACK_APP_TOKEN, "Content-type": "application/json; charset=utf-8"}
     )
     logger.info(response.json())
     return response
