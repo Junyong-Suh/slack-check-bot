@@ -1,5 +1,4 @@
 import constants as c
-import logging
 import os
 
 

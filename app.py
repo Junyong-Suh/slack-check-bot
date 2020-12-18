@@ -17,7 +17,7 @@ def initialize():
 
 @app.route('/', methods=['GET'])
 def index():
-    logger.info('Hello World!')
+    logger.error('Hello World!')
     return jsonify('Hello World!')
 
 
@@ -25,7 +25,7 @@ def index():
 @app.route('/challenge', methods=['POST'])
 def challenge():
     r = request.get_json()
-    logger.info(r)
+    logger.error(r)
 
     # should respond to Slack's challenge
     if 'challenge' in r:

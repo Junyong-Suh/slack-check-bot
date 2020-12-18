@@ -3,11 +3,23 @@ import constants as c
 from libs import logger
 
 
+KEYWORDS = ["done", "status", "Done", "Status", "DONE", "STATUS"]
+
+
 def handle_event(r):
     event = parse_event(r['event'])
+    logger.error(event)
+
     if has_keywords(event['text']):
         message = {"channel": event['channel'], "text": event['text']}
         send_message(message)
+
+    # done
+        # set redis
+
+    # status
+        # get redis
+
     return event
 
 
@@ -22,7 +34,7 @@ def send_message(message):
 
 
 def has_keywords(text):
-    for k in c.KEYWORDS:
+    for k in KEYWORDS:
         if k in text:
             return True
     return False
