@@ -15,14 +15,14 @@ def handle_event(r):
         send_message(message)
 
     # done
-    if any(tag in event.message.text for tag in ['#인증', '#ㅇㅈ']):
+    if any(tag in event['text'] for tag in ['#인증', '#ㅇㅈ']):
         # set redis
         redis.mark(event['channel'], event['user'])
         message = {"channel": event['channel'], "text": "인증!"}
         send_message(message)
 
     # status
-    if any(tag in event.message.text for tag in ['#인증현황', '#인증내역']):
+    if any(tag in event['text'] for tag in ['#인증현황', '#인증내역']):
         # get redis
         status = redis.status(event['channel'], event['user'])
         message = {"channel": event['channel'], "text": f"인증현황: {status}"}
