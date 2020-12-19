@@ -1,3 +1,4 @@
+import constants as c
 from datetime import datetime
 from libs import logger, redis, slack
 
@@ -5,7 +6,7 @@ from libs import logger, redis, slack
 KEYWORDS_MARK = ["인증", "ㅇㅈ", "done", "Done", "check", "Check"]
 KEYWORDS_STATUS = ["현황", "내역", "status", "Status"]
 KEYWORDS_CANCEL = ["취소", "cancel", "Cancel"]
-KEYWORDS_HELP = ["help", "usage", "Help", "Cancel"]
+KEYWORDS_HELP = ["help", "Help", "usage", "Usage", "hi", "Hi"]
 
 
 def event(request):
@@ -13,7 +14,7 @@ def event(request):
     logger.info(e)
 
     # help
-    if e['text'] == "" or any(tag in e['text'] for tag in KEYWORDS_HELP):
+    if e['text'] == f"<@{c.SLACK_CHECK_BOT_ID}>" or any(tag in e['text'] for tag in KEYWORDS_HELP):
         return usage(e)
 
     # mark
