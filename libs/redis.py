@@ -6,7 +6,7 @@ r = redis_heroku.from_url(os.environ.get("REDIS_URL"), charset="utf-8", decode_r
 
 
 def mark(channel_id, user_id):
-    return r.incr(generate_key(channel_id, user_id), 1)
+    return r.incr(generate_key(channel_id, user_id))
 
 
 def status(channel_id, user_id):
@@ -14,7 +14,11 @@ def status(channel_id, user_id):
 
 
 def cancel(channel_id, user_id):
-    return r.decr(generate_key(channel_id, user_id), 1)
+    return r.decr(generate_key(channel_id, user_id))
+
+
+def reset(channel_id, user_id):
+    r.set(generate_key(channel_id, user_id), 0)
 
 
 def generate_key(channel_id, user_id):
