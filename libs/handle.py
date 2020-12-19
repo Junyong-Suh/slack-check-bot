@@ -3,7 +3,7 @@ from datetime import datetime
 from libs import logger, redis, slack
 
 
-KEYWORDS_MARK = ["인증", "ㅇㅈ", "done", "Done", "check", "Check"]
+KEYWORDS_MARK = ["인증", "ㅇㅈ", "출첵", "ㅊㅊ", "done", "Done", "check", "Check"]
 KEYWORDS_STATUS = ["현황", "내역", "status", "Status"]
 KEYWORDS_CANCEL = ["취소", "cancel", "Cancel"]
 KEYWORDS_HELP = ["help", "Help", "usage", "Usage", "hi", "Hi"]

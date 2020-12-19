@@ -2,6 +2,8 @@
 
 Slack bot to record your daily checks
 
+![slack-check-bot](https://raw.githubusercontent.com/Junyong-Suh/slack-check-bot/master/static/sample-v1.0.png)
+
 ## Requirements
 
 * Requires Python 3.8.2+
@@ -37,6 +39,17 @@ $ python3 --version
 Python 3.8.2
 $ pip3 install -r requirements.txt
 ```
+
+### Create a Slack Bot
+TBD
+
+### Setup on Heroku
+TBD
+
+## Reference
+
+* [Thirty-days](https://github.com/eunbeom/thirty-days) on LINE
+* https://cholol.tistory.com/503
 
 ## Contributions
 
