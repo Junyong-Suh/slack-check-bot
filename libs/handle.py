@@ -1,9 +1,9 @@
 from libs import logger, redis, slack
 
 
-KEYWORDS_MARK = ["인증", "ㅇㅈ", "done", "Done", "DONE"]
-KEYWORDS_STATUS = ["현황", "내역", "status", "Status", "STATUS"]
-KEYWORDS_CANCEL = ["취소", "cancel"]
+KEYWORDS_MARK = ["인증", "ㅇㅈ", "done", "Done", "check", "Check"]
+KEYWORDS_STATUS = ["현황", "내역", "status", "Status"]
+KEYWORDS_CANCEL = ["취소", "cancel", "Cancel"]
 
 
 def event(request):
@@ -30,7 +30,7 @@ def mark(e):
     st = redis.mark(e['channel'], e['user'])
     message = {
         "channel": e['channel'],
-        "text": f"<@{e['user']}> marked {st} times this month :completed:"
+        "text": f"<@{e['user']}> marked {st} times this month :white_check_mark:"
     }
     slack.send_message(message)
     return e
