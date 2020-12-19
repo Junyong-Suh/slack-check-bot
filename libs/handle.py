@@ -1,4 +1,4 @@
-import constants as c
+import config as c
 from datetime import datetime
 from libs import logger, redis, slack
 

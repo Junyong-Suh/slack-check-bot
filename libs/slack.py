@@ -1,5 +1,5 @@
 import requests
-import constants as c
+import config as c
 from libs import logger
 
 
