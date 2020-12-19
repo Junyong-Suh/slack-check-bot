@@ -58,7 +58,7 @@ def status(e):
     count = redis.status(e['channel'], e['user'])
 
     # no status
-    if count < 1:
+    if int(count) < 1:
         return reset(e)
 
     message = {
@@ -74,7 +74,7 @@ def cancel(e):
     count = redis.cancel(e['channel'], e['user'])
 
     # can't go negative, reset
-    if count < 0:
+    if int(count) < 0:
         return reset(e)
 
     message = {
@@ -85,6 +85,7 @@ def cancel(e):
     return e
 
 
+# reset the status
 def reset(e):
     redis.reset(e['channel'], e['user'])
     message = {
@@ -99,7 +100,7 @@ def reset(e):
 def progress_percent(count):
     now = datetime.now()
     percent = round(int(count) / int(now.day) * 100, 2)
-    if count == 1:
+    if int(count) == 1:
         return f"{count} time ({percent}%)"
     else:
         return f"{count} times ({percent}%)"
