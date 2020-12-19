@@ -18,7 +18,7 @@ def handle_event(r):
         status = redis.mark(event['channel'], event['user'])
         message = {
             "channel": event['channel'],
-            "text": f"{event['user']} marked {status} times this month :raised_hands:"
+            "text": f"<@{event['user']}> marked {status} times this month :raised_hands:"
         }
         send_message(message)
         return event
@@ -29,7 +29,7 @@ def handle_event(r):
         status = redis.status(event['channel'], event['user'])
         message = {
             "channel": event['channel'],
-            "text": f"Marked {status} times this month :raised_hands:"
+            "text": f"<@{event['user']}> marked {status} times this month so far :raised_hands:"
         }
         send_message(message)
         return event
