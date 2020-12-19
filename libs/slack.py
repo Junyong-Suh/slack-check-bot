@@ -3,39 +3,49 @@ import constants as c
 from libs import logger, redis
 
 
-KEYWORDS = ["done", "status", "Done", "Status", "DONE", "STATUS"]
+KEYWORDS = ["status", "Status", "STATUS"]
+KEYWORDS_MARK = ["인증", "ㅇㅈ", "done", "Done", "DONE"]
+KEYWORDS_STATUS = ["현황", "내역", "status", "Status", "STATUS"]
 
 
 def handle_event(r):
     event = r['event']
     logger.info(event)
 
-    if has_keywords(event['text']):
-        message = {"channel": event['channel'], "text": event['text']}
-        send_message(message)
-
     # done
-    if any(tag in event['text'] for tag in ['#인증', '#ㅇㅈ']):
+    if any(tag in event['text'] for tag in KEYWORDS_MARK):
         # set redis
-        redis.mark(event['channel'], event['user'])
-        message = {"channel": event['channel'], "text": "인증!"}
+        status = redis.mark(event['channel'], event['user'])
+        message = {
+            "channel": event['channel'],
+            "text": f"{event['user']} marked {status} times this month :raised_hands:"
+        }
         send_message(message)
+        return event
 
     # status
-    if any(tag in event['text'] for tag in ['#인증현황', '#인증내역']):
+    if any(tag in event['text'] for tag in KEYWORDS_STATUS):
         # get redis
         status = redis.status(event['channel'], event['user'])
-        message = {"channel": event['channel'], "text": f"인증현황: {status}"}
+        message = {
+            "channel": event['channel'],
+            "text": f"Marked {status} times this month :raised_hands:"
+        }
         send_message(message)
+        return event
 
     return event
 
 
+# send a message to Slack
 def send_message(message):
     response = requests.post(
         url=c.SLACK_API_URL,
         json=message,
-        headers={"Authorization": c.SLACK_APP_TOKEN, "Content-type": "application/json; charset=utf-8"}
+        headers={
+            "Authorization": c.SLACK_APP_TOKEN,
+            "Content-type": "application/json; charset=utf-8"  # missing_charset if omitted
+        }
     )
     logger.info(response.json())
     return response
