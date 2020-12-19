@@ -5,11 +5,16 @@ from libs import logger, redis, slack
 KEYWORDS_MARK = ["인증", "ㅇㅈ", "done", "Done", "check", "Check"]
 KEYWORDS_STATUS = ["현황", "내역", "status", "Status"]
 KEYWORDS_CANCEL = ["취소", "cancel", "Cancel"]
+KEYWORDS_HELP = ["help", "usage", "Help", "Cancel"]
 
 
 def event(request):
     e = request['event']
     logger.info(e)
+
+    # help
+    if e['text'] == "" or any(tag in e['text'] for tag in KEYWORDS_HELP):
+        return usage(e)
 
     # mark
     if any(tag in e['text'] for tag in KEYWORDS_MARK):
@@ -23,6 +28,16 @@ def event(request):
     if any(tag in e['text'] for tag in KEYWORDS_CANCEL):
         return cancel(e)
 
+    return e
+
+
+# help commands
+def usage(e):
+    message = {
+        "channel": e['channel'],
+        "text": f"Mention me with any keyword in ['done', 'cancel', 'status', 'help'] :wave:"
+    }
+    slack.send_message(message)
     return e
 
 
