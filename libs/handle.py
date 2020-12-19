@@ -31,7 +31,7 @@ def mark(e):
     count = redis.mark(e['channel'], e['user'])
     message = {
         "channel": e['channel'],
-        "text": f"<@{e['user']}> marked {count} times this month :white_check_mark:"
+        "text": f"<@{e['user']}> marked {progress_percent(count)} this month :white_check_mark:"
     }
     slack.send_message(message)
     return e
@@ -42,7 +42,7 @@ def status(e):
     count = redis.status(e['channel'], e['user'])
     message = {
         "channel": e['channel'],
-        "text": f"<@{e['user']}> marked {count} times this month so far :thumbsup:"
+        "text": f"<@{e['user']}> marked {progress_percent(count)} this month so far :thumbsup:"
     }
     slack.send_message(message)
     return e
@@ -62,7 +62,7 @@ def cancel(e):
     else:
         message = {
             "channel": e['channel'],
-            "text": f"<@{e['user']}> last mark canceled - {count} times marked this month :wink:"
+            "text": f"<@{e['user']}> last mark canceled - {progress_percent(count)} marked this month :wink:"
         }
     slack.send_message(message)
     return e
