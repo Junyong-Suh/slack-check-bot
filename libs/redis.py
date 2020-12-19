@@ -13,7 +13,10 @@ def status(channel_id, user_id):
     return r.get(generate_key(channel_id, user_id))
 
 
+def cancel(channel_id, user_id):
+    return r.decr(generate_key(channel_id, user_id), 1)
+
+
 def generate_key(channel_id, user_id):
     now = datetime.now()
     return f"{channel_id}:{now.year}:{now.month:02d}:{user_id}"
-

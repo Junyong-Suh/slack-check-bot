@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from libs import setup, logger, slack
+from libs import setup, logger, slack, handle
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
@@ -22,13 +22,13 @@ def challenge():
     r = request.get_json()
     logger.info(r)
 
-    # should respond to Slack's challenge
+    # respond to Slack's challenge
     if 'challenge' in r:
-        return r['challenge']
+        return handle.challenge(r)
 
     # capture events
     if 'event' in r:
-        return slack.handle_event(r)
+        return handle.event(r)
 
     logger.error("unknown event received")
     return r
