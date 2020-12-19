@@ -71,7 +71,7 @@ def cancel(e):
 # progress percent
 def progress_percent(count):
     now = datetime.now()
-    percent = round(count / now.day * 100, 2)
+    percent = round(int(count) / int(now.day) * 100, 2)
     if count == 1:
         return f"{count} time ({percent}%)"
     else:
