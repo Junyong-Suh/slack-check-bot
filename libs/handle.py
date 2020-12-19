@@ -1,3 +1,4 @@
+from datetime import datetime
 from libs import logger, redis, slack
 
 
@@ -27,10 +28,10 @@ def event(request):
 
 # increase the count
 def mark(e):
-    st = redis.mark(e['channel'], e['user'])
+    count = redis.mark(e['channel'], e['user'])
     message = {
         "channel": e['channel'],
-        "text": f"<@{e['user']}> marked {st} times this month :white_check_mark:"
+        "text": f"<@{e['user']}> marked {count} times this month :white_check_mark:"
     }
     slack.send_message(message)
     return e
@@ -38,10 +39,10 @@ def mark(e):
 
 # get the count
 def status(e):
-    st = redis.status(e['channel'], e['user'])
+    count = redis.status(e['channel'], e['user'])
     message = {
         "channel": e['channel'],
-        "text": f"<@{e['user']}> marked {st} times this month so far :thumbsup:"
+        "text": f"<@{e['user']}> marked {count} times this month so far :thumbsup:"
     }
     slack.send_message(message)
     return e
@@ -49,10 +50,10 @@ def status(e):
 
 # decrease the count
 def cancel(e):
-    st = redis.cancel(e['channel'], e['user'])
+    count = redis.cancel(e['channel'], e['user'])
 
     # can't go negative
-    if st < 0:
+    if count < 0:
         redis.reset(e['channel'], e['user'])
         message = {
             "channel": e['channel'],
@@ -61,10 +62,20 @@ def cancel(e):
     else:
         message = {
             "channel": e['channel'],
-            "text": f"<@{e['user']}> last mark canceled - {st} times marked this month :wink:"
+            "text": f"<@{e['user']}> last mark canceled - {count} times marked this month :wink:"
         }
     slack.send_message(message)
     return e
+
+
+# progress percent
+def progress_percent(count):
+    now = datetime.now()
+    percent = round(count / now.day * 100, 2)
+    if count == 1:
+        return f"{count} time ({percent}%)"
+    else:
+        return f"{count} times ({percent}%)"
 
 
 def challenge(request):
