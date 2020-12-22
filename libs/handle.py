@@ -14,7 +14,7 @@ def event(request):
     logger.info(e)
 
     # help
-    if e['text'] == f"<@{c.SLACK_CHECK_BOT_ID}>" or any(tag in e['text'] for tag in KEYWORDS_HELP):
+    if e['text'] == f"{slack.mention(c.SLACK_CHECK_BOT_ID)}" or any(tag in e['text'] for tag in KEYWORDS_HELP):
         return usage(e)
 
     # mark
@@ -47,7 +47,7 @@ def mark(e):
     count = redis.mark(e['channel'], e['user'])
     message = {
         "channel": e['channel'],
-        "text": f"<@{e['user']}> marked {progress_percent(count)} this month :white_check_mark:"
+        "text": f"{slack.mention(e['user'])} marked {progress_percent(count)} this month :white_check_mark:"
     }
     slack.send_message(message)
     return e
@@ -63,7 +63,7 @@ def status(e):
 
     message = {
         "channel": e['channel'],
-        "text": f"<@{e['user']}> marked {progress_percent(count)} this month so far :thumbsup:"
+        "text": f"{slack.mention(e['user'])} marked {progress_percent(count)} this month so far :thumbsup:"
     }
     slack.send_message(message)
     return e
@@ -79,7 +79,7 @@ def cancel(e):
 
     message = {
         "channel": e['channel'],
-        "text": f"<@{e['user']}> last mark canceled - {progress_percent(count)} marked this month :wink:"
+        "text": f"{slack.mention(e['user'])} last mark canceled - {progress_percent(count)} marked this month :wink:"
     }
     slack.send_message(message)
     return e
@@ -90,7 +90,7 @@ def reset(e):
     redis.reset(e['channel'], e['user'])
     message = {
         "channel": e['channel'],
-        "text": f"<@{e['user']}> wait, you never done any yet :smirk:"
+        "text": f"{slack.mention(e['user'])} wait, you never done any yet :smirk:"
     }
     slack.send_message(message)
     return e
