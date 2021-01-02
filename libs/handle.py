@@ -3,10 +3,10 @@ from datetime import datetime
 from libs import logger, redis, slack
 
 
-KEYWORDS_MARK = ["인증", "ㅇㅈ", "출첵", "ㅊㅊ", "done", "Done", "check", "Check"]
-KEYWORDS_STATUS = ["현황", "내역", "status", "Status"]
-KEYWORDS_CANCEL = ["취소", "cancel", "Cancel"]
-KEYWORDS_HELP = ["help", "Help", "usage", "Usage", "hi", "Hi"]
+KEYWORDS_MARK = ["done", "Done"]
+KEYWORDS_STATUS = ["status", "Status"]
+KEYWORDS_CANCEL = ["cancel", "Cancel"]
+KEYWORDS_HELP = ["help", "Help"]
 
 
 def event(request):
@@ -14,7 +14,7 @@ def event(request):
     logger.info(e)
 
     # help
-    if e['text'] == f"{slack.mention(c.SLACK_CHECK_BOT_ID)}" or any(tag in e['text'] for tag in KEYWORDS_HELP):
+    if any(tag in e['text'] for tag in KEYWORDS_HELP):
         return usage(e)
 
     # mark
