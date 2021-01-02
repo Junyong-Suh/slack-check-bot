@@ -50,4 +50,4 @@ def disable():
 
 
 def config_key_enabled():
-    return f"{c.ADMIN_SLACK_IDS}:config:enabled"
+    return f"{c.SLACK_CHECK_BOT_ID}:config:enabled"
