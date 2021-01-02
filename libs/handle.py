@@ -7,8 +7,8 @@ KEYWORDS_MARK = ["done", "Done", "DONE", "인증"]
 KEYWORDS_STATUS = ["status", "Status", "STATUS", "현황"]
 KEYWORDS_CANCEL = ["cancel", "Cancel", "CANCEL", "취소"]
 KEYWORDS_HELP = ["help", "Help", "HELP"]
-KEYWORDS_DISABLE = ["이건아니지"]
-KEYWORDS_ENABLE = ["아브라카다브라"]
+KEYWORDS_DISABLE = ["긴급상황"]
+KEYWORDS_ENABLE = ["돌아와줘"]
 KEYWORDS_IS_ALIVE = ["살아있니"]
 
 
