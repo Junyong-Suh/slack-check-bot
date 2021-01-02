@@ -1,3 +1,4 @@
+import config as c
 from datetime import datetime
 from libs import logger, redis, slack
 
@@ -6,6 +7,8 @@ KEYWORDS_MARK = ["done", "Done", "DONE", "인증"]
 KEYWORDS_STATUS = ["status", "Status", "STATUS", "현황"]
 KEYWORDS_CANCEL = ["cancel", "Cancel", "CANCEL", "취소"]
 KEYWORDS_HELP = ["help", "Help", "HELP"]
+KEYWORDS_DISABLE = ["disable", "멈춰"]
+KEYWORDS_ENABLE = ["enable", "시작"]
 
 
 def event(e):
@@ -14,6 +17,10 @@ def event(e):
     # do nothing if app mention text is not available
     if event_text is None:
         return None
+
+    # disable the app - emergency stop
+    if any(tag in event_text for tag in KEYWORDS_DISABLE):
+        return disable(e)
 
     # help
     if any(tag in event_text for tag in KEYWORDS_HELP):
@@ -30,6 +37,10 @@ def event(e):
     # cancel
     if any(tag in event_text for tag in KEYWORDS_CANCEL):
         return cancel(e)
+
+    # enable the app
+    if any(tag in event_text for tag in KEYWORDS_ENABLE):
+        return enable(e)
 
     return e
 
@@ -54,6 +65,54 @@ def get_app_mention_text(e):
 
     logger.error(f"Unexpected event: {e}")
     return None
+
+
+# disable the app
+def disable(e):
+    if is_user_admin(e['user']):
+        # only for admin
+        c.CHECK_BOT_APP_ENABLED = False
+        logger.error(f"Check bot disabled by {e['user']}")
+        message_text = f"{slack.mention(e['user'])} disabled :disappointed:"
+    else:
+        # restrict others
+        logger.error(f"Check bot disable request by {e['user']} rejected")
+        message_text = f"{slack.mention(e['user'])} is not allowed to disable the app :no_entry_sign:"
+
+    # send message
+    slack.send_message({
+        "channel": e['channel'],
+        "text": message_text
+    })
+
+
+# enable the app
+def enable(e):
+    if is_user_admin(e['user']):
+        # only for admin
+        c.CHECK_BOT_APP_ENABLED = True
+        logger.error(f"Check bot enabled by {e['user']}")
+        message_text = f"{slack.mention(e['user'])} enabled :tada:"
+    else:
+        # restrict others
+        logger.error(f"Check bot enable request by {e['user']} rejected")
+        message_text = f"{slack.mention(e['user'])} is not allowed to enable the app :no_entry_sign:"
+
+    # send message
+    slack.send_message({
+        "channel": e['channel'],
+        "text": message_text
+    })
+
+
+# reject if the app is disabled
+def reject(e):
+    message = {
+        "channel": e['channel'],
+        "text": "The app is disabled by admin :pray: - please contact admins"
+    }
+    slack.send_message(message)
+    return e
 
 
 # help commands
@@ -118,6 +177,10 @@ def reset(e):
     }
     slack.send_message(message)
     return e
+
+
+def is_user_admin(user):
+    return user in c.ADMIN_SLACK_IDS
 
 
 def is_event_type_app_mention(e):

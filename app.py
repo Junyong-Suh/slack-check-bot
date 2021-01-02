@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import config as c
 from libs import setup, logger, handle
 from flask import Flask, request, jsonify
 
@@ -25,6 +26,10 @@ def challenge():
     # respond to Slack's challenge
     if 'challenge' in r:
         return r['challenge']
+
+    if not c.CHECK_BOT_APP_ENABLED:
+        logger.info(f"Check bot is disabled: {r}")
+        return handle.reject(r['event'])
 
     # capture events
     if 'event' in r:
