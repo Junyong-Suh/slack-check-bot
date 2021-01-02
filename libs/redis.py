@@ -1,4 +1,5 @@
 from datetime import datetime
+from libs import logger
 import config as c
 import os
 import redis as redis_heroku
@@ -33,7 +34,9 @@ def generate_key(channel_id, user_id):
 
 # return if the app is alive
 def is_alive():
-    if r.get(config_key_enabled()) != 0:
+    enabled = r.get(config_key_enabled())
+    logger.info(f"is_alive: {enabled}")
+    if enabled != 0:
         return True  # includes the value never set
     else:
         return False
