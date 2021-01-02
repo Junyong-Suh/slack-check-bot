@@ -128,9 +128,9 @@ def reject(e):
 # is alive
 def is_alive(e):
     if c.CHECK_BOT_APP_ENABLED:
-        status_by_emoji = ":man-gesturing-ok"
+        status_by_emoji = ":man-gesturing-ok:"
     else:
-        status_by_emoji = ":man-gesturing-no"
+        status_by_emoji = ":man-gesturing-no:"
 
     message = {
         "channel": e['channel'],
