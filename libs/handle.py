@@ -3,9 +3,9 @@ from datetime import datetime
 from libs import logger, redis, slack
 
 
-KEYWORDS_MARK = ["done", "Done", "DONE", "인증"]
+KEYWORDS_MARK = ["done", "Done", "DONE", "인증", "ㅇㅈ"]
 KEYWORDS_STATUS = ["status", "Status", "STATUS", "현황"]
-KEYWORDS_CANCEL = ["cancel", "Cancel", "CANCEL", "취소"]
+KEYWORDS_CANCEL = ["cancel", "Cancel", "CANCEL", "취소", "ㅊㅅ"]
 KEYWORDS_HELP = ["help", "Help", "HELP"]
 KEYWORDS_DISABLE = ["긴급상황"]
 KEYWORDS_ENABLE = ["돌아와줘"]
@@ -146,7 +146,9 @@ def is_enabled(e):
 def usage(e):
     message = {
         "channel": e['channel'],
-        "text": f"Mention me with any keyword in ['done', 'cancel', 'status', 'help'] :wave:"
+        "text": f"Mention me with any keyword in "
+                f"['done', 'cancel', 'status', 'help', '인증', 'ㅇㅈ', '취소', 'ㅊㅅ', '현황'] "
+                f":wave:"
     }
     slack.send_message(message)
     return e
