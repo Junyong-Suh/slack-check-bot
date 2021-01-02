@@ -24,11 +24,11 @@ def challenge():
 
     # respond to Slack's challenge
     if 'challenge' in r:
-        return handle.challenge(r)
+        return request['challenge']
 
     # capture events
     if 'event' in r:
-        return handle.event(r)
+        return handle.event(request['event'])
 
     logger.error(f"unexpected request received: {r}")
     return r

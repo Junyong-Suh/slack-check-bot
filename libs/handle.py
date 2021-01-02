@@ -1,45 +1,59 @@
-import config as c
 from datetime import datetime
 from libs import logger, redis, slack
 
 
-KEYWORDS_MARK = ["done", "Done"]
-KEYWORDS_STATUS = ["status", "Status"]
-KEYWORDS_CANCEL = ["cancel", "Cancel"]
-KEYWORDS_HELP = ["help", "Help"]
+KEYWORDS_MARK = ["done", "Done", "DONE"]
+KEYWORDS_STATUS = ["status", "Status", "STATUS"]
+KEYWORDS_CANCEL = ["cancel", "Cancel", "CANCEL"]
+KEYWORDS_HELP = ["help", "Help", "HELP"]
 
 
-def event(request):
-    # unexpected requests
-    if 'event' not in request:
-        logger.error(f"unexpected request missing 'event': {request}")
-        return None
+def event(e):
+    event_text = get_app_mention_text(e)
 
-    e = request['event']
-    logger.info(e)
-
-    # unexpected events
-    if 'text' not in e:
-        logger.error(f"unexpected event missing 'text': {e}")
+    # do nothing if app mention text is not available
+    if event_text in None:
         return None
 
     # help
-    if any(tag in e['text'] for tag in KEYWORDS_HELP):
+    if any(tag in event_text for tag in KEYWORDS_HELP):
         return usage(e)
 
     # mark
-    if any(tag in e['text'] for tag in KEYWORDS_MARK):
+    if any(tag in event_text for tag in KEYWORDS_MARK):
         return mark(e)
 
     # status
-    if any(tag in e['text'] for tag in KEYWORDS_STATUS):
+    if any(tag in event_text for tag in KEYWORDS_STATUS):
         return status(e)
 
     # cancel
-    if any(tag in e['text'] for tag in KEYWORDS_CANCEL):
+    if any(tag in event_text for tag in KEYWORDS_CANCEL):
         return cancel(e)
 
     return e
+
+
+# handles different types of event
+# returns None if not available
+def get_app_mention_text(e):
+    # app_mention: https://gist.github.com/Junyong-Suh/94fc948c8c1f7819a258101a23f169aa
+    if is_event_type_app_mention(e) and 'text' in e:
+        return e['text']
+
+    if is_event_type_message(e):
+        # message_changed: https://gist.github.com/Junyong-Suh/20e0291bc3ba230b2496ea2620cc66dd
+        if is_message_subtype_message_changed(e):
+            logger.info(f"Message changed: {e}")
+            return None
+
+        # message_deleted: https://gist.github.com/Junyong-Suh/385d2d68dd3ffbf88dad50f2032716c8
+        if is_message_subtype_message_deleted(e):
+            logger.info(f"Message deleted: {e}")
+            return None
+
+    logger.error(f"Unexpected event: {e}")
+    return None
 
 
 # help commands
@@ -106,6 +120,22 @@ def reset(e):
     return e
 
 
+def is_event_type_app_mention(e):
+    return 'type' in e and e['type'] == 'app_mention'
+
+
+def is_event_type_message(e):
+    return 'type' in e and e['type'] == 'message'
+
+
+def is_message_subtype_message_changed(e):
+    return 'subtype' in e and e['subtype'] == 'message_changed'
+
+
+def is_message_subtype_message_deleted(e):
+    return 'subtype' in e and e['subtype'] == 'message_deleted'
+
+
 # progress percent
 def progress_percent(count):
     now = datetime.now()
@@ -114,7 +144,3 @@ def progress_percent(count):
         return f"{count} time ({percent}%)"
     else:
         return f"{count} times ({percent}%)"
-
-
-def challenge(request):
-    return request['challenge']
