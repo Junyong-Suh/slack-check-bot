@@ -30,7 +30,7 @@ def challenge():
     if 'event' in r:
         return handle.event(r)
 
-    logger.error("unknown event received")
+    logger.error(f"unexpected request received: {r}")
     return r
 
 

@@ -10,8 +10,18 @@ KEYWORDS_HELP = ["help", "Help"]
 
 
 def event(request):
+    # unexpected requests
+    if 'event' not in request:
+        logger.error(f"unexpected request missing 'event': {request}")
+        return None
+
     e = request['event']
     logger.info(e)
+
+    # unexpected events
+    if 'text' not in e:
+        logger.error(f"unexpected event missing 'text': {e}")
+        return None
 
     # help
     if any(tag in e['text'] for tag in KEYWORDS_HELP):
