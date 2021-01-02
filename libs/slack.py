@@ -7,6 +7,7 @@ from libs import logger
 # https://api.slack.com/docs/rate-limits#rate-limits__limits-when-posting-messages
 # In general, apps may post no more than one message per second per channel
 def send_message(message):
+    # ToDo: Let post message to Slack ONCE per minute per channel to avoid rate limit using Redis
     try:
         response = requests.post(
             url=c.SLACK_API_CHAT_POST_MESSAGE_URL,
