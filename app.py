@@ -7,8 +7,6 @@ app = Flask(__name__)
 
 @app.before_first_request
 def initialize():
-    if redis.is_alive() is None:
-        redis.enable()
     setup.setup_credentials()
 
 
