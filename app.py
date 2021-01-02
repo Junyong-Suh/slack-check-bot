@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from libs import setup, logger, handle
+from libs import setup, logger, handle, redis
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
@@ -7,6 +7,8 @@ app = Flask(__name__)
 
 @app.before_first_request
 def initialize():
+    if redis.is_alive() is None:
+        redis.enable()
     setup.setup_credentials()
 
 

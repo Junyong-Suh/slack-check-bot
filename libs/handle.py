@@ -32,7 +32,7 @@ def event(e):
         return is_alive(e)
 
     # reject if the app is disabled hereafter
-    if not c.CHECK_BOT_APP_ENABLED:
+    if not redis.is_alive():
         return reject(e)
 
     # help
@@ -79,7 +79,7 @@ def get_app_mention_text(e):
 def disable(e):
     if is_user_admin(e['user']):
         # only for admin
-        c.CHECK_BOT_APP_ENABLED = False
+        redis.disable()
         logger.error(f"Check bot disabled by {e['user']}")
         message_text = f"{slack.mention(c.SLACK_CHECK_BOT_ID)} brought down " \
                        f"by {slack.mention(e['user'])} :disappointed:"
@@ -100,7 +100,7 @@ def disable(e):
 def enable(e):
     if is_user_admin(e['user']):
         # only for admin
-        c.CHECK_BOT_APP_ENABLED = True
+        redis.enable()
         logger.error(f"Check bot enabled by {e['user']}")
         message_text = f"{slack.mention(c.SLACK_CHECK_BOT_ID)} back alive " \
                        f"by {slack.mention(e['user'])} :tada:"
@@ -129,7 +129,7 @@ def reject(e):
 
 # is alive
 def is_alive(e):
-    if c.CHECK_BOT_APP_ENABLED:
+    if redis.is_alive():
         status_by_emoji = ":man-gesturing-ok:"
     else:
         status_by_emoji = ":man-gesturing-no:"
