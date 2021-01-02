@@ -9,6 +9,7 @@ KEYWORDS_CANCEL = ["cancel", "Cancel", "CANCEL", "취소"]
 KEYWORDS_HELP = ["help", "Help", "HELP"]
 KEYWORDS_DISABLE = ["이건아니지"]
 KEYWORDS_ENABLE = ["아브라카다브라"]
+KEYWORDS_IS_ALIVE = ["살아있니"]
 
 
 def event(e):
@@ -25,6 +26,10 @@ def event(e):
     # enable the app
     if any(tag in event_text for tag in KEYWORDS_ENABLE):
         return enable(e)
+
+    # enable the app
+    if any(tag in event_text for tag in KEYWORDS_IS_ALIVE):
+        return is_alive(e)
 
     # reject if the app is disabled hereafter
     if not c.CHECK_BOT_APP_ENABLED:
@@ -115,6 +120,21 @@ def reject(e):
     message = {
         "channel": e['channel'],
         "text": "The app is disabled by admin :pray: - please contact admins"
+    }
+    slack.send_message(message)
+    return e
+
+
+# is alive
+def is_alive(e):
+    if c.CHECK_BOT_APP_ENABLED:
+        status_by_emoji = ":man-gesturing-ok"
+    else:
+        status_by_emoji = ":man-gesturing-no"
+
+    message = {
+        "channel": e['channel'],
+        "text": f"Is {slack.mention(c.SLACK_CHECK_BOT_ID)} alive? :arrow_right: {status_by_emoji}"
     }
     slack.send_message(message)
     return e
