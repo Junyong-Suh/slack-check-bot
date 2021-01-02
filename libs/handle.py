@@ -7,8 +7,8 @@ KEYWORDS_MARK = ["done", "Done", "DONE", "인증"]
 KEYWORDS_STATUS = ["status", "Status", "STATUS", "현황"]
 KEYWORDS_CANCEL = ["cancel", "Cancel", "CANCEL", "취소"]
 KEYWORDS_HELP = ["help", "Help", "HELP"]
-KEYWORDS_DISABLE = ["disable", "멈춰"]
-KEYWORDS_ENABLE = ["enable", "시작"]
+KEYWORDS_DISABLE = ["disable"]
+KEYWORDS_ENABLE = ["enable"]
 
 
 def event(e):
@@ -21,6 +21,14 @@ def event(e):
     # disable the app - emergency stop
     if any(tag in event_text for tag in KEYWORDS_DISABLE):
         return disable(e)
+
+    # enable the app
+    if any(tag in event_text for tag in KEYWORDS_ENABLE):
+        return enable(e)
+
+    # reject if the app is disabled hereafter
+    if not c.CHECK_BOT_APP_ENABLED:
+        return reject(e)
 
     # help
     if any(tag in event_text for tag in KEYWORDS_HELP):
@@ -37,10 +45,6 @@ def event(e):
     # cancel
     if any(tag in event_text for tag in KEYWORDS_CANCEL):
         return cancel(e)
-
-    # enable the app
-    if any(tag in event_text for tag in KEYWORDS_ENABLE):
-        return enable(e)
 
     return e
 
@@ -180,6 +184,7 @@ def reset(e):
 
 
 def is_user_admin(user):
+    logger.info(f"Current admins: {c.ADMIN_SLACK_IDS}")
     return user in c.ADMIN_SLACK_IDS
 
 
