@@ -12,7 +12,7 @@ def event(e):
     event_text = get_app_mention_text(e)
 
     # do nothing if app mention text is not available
-    if event_text in None:
+    if event_text is None:
         return None
 
     # help
