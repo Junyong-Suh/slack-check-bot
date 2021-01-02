@@ -80,7 +80,7 @@ def disable(e):
     if is_user_admin(e['user']):
         # only for admin
         redis.disable()
-        logger.error(f"Check bot disabled by {e['user']}")
+        logger.error(f"Check bot disabled by {e['user']} - redis.is_alive(): {redis.is_alive()}")
         message_text = f"{slack.mention(c.SLACK_CHECK_BOT_ID)} brought down " \
                        f"by {slack.mention(e['user'])} :disappointed:"
     else:
@@ -101,7 +101,7 @@ def enable(e):
     if is_user_admin(e['user']):
         # only for admin
         redis.enable()
-        logger.error(f"Check bot enabled by {e['user']}")
+        logger.error(f"Check bot enabled by {e['user']} - redis.is_alive(): {redis.is_alive()}")
         message_text = f"{slack.mention(c.SLACK_CHECK_BOT_ID)} back alive " \
                        f"by {slack.mention(e['user'])} :tada:"
     else:
