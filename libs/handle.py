@@ -12,11 +12,11 @@ KEYWORDS_ENABLE = ["enable"]
 
 
 def event(e):
-    event_text = get_app_mention_text(e)
+    event_text, ok = get_app_mention_text(e)
 
     # do nothing if app mention text is not available
-    if event_text is None:
-        return None
+    if not ok:
+        return e
 
     # disable the app - emergency stop
     if any(tag in event_text for tag in KEYWORDS_DISABLE):
@@ -50,25 +50,24 @@ def event(e):
 
 
 # handles different types of event
-# returns None if not available
 def get_app_mention_text(e):
     # app_mention: https://gist.github.com/Junyong-Suh/94fc948c8c1f7819a258101a23f169aa
     if is_event_type_app_mention(e) and 'text' in e:
-        return e['text']
+        return e['text'], True
 
     if is_event_type_message(e):
         # message_changed: https://gist.github.com/Junyong-Suh/20e0291bc3ba230b2496ea2620cc66dd
         if is_message_subtype_message_changed(e):
             logger.info(f"Message changed: {e}")
-            return None
+            return e, False
 
         # message_deleted: https://gist.github.com/Junyong-Suh/385d2d68dd3ffbf88dad50f2032716c8
         if is_message_subtype_message_deleted(e):
             logger.info(f"Message deleted: {e}")
-            return None
+            return e, False
 
     logger.error(f"Unexpected event: {e}")
-    return None
+    return e, False
 
 
 # disable the app
