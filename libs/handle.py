@@ -9,7 +9,7 @@ KEYWORDS_CANCEL = ["cancel", "Cancel", "CANCEL", "취소"]
 KEYWORDS_HELP = ["help", "Help", "HELP"]
 KEYWORDS_DISABLE = ["긴급상황"]
 KEYWORDS_ENABLE = ["돌아와줘"]
-KEYWORDS_IS_ALIVE = ["살아있니"]
+KEYWORDS_IS_ENABLED = ["살아있니"]
 
 
 def event(e):
@@ -28,11 +28,11 @@ def event(e):
         return enable(e)
 
     # enable the app
-    if any(tag in event_text for tag in KEYWORDS_IS_ALIVE):
-        return is_alive(e)
+    if any(tag in event_text for tag in KEYWORDS_IS_ENABLED):
+        return is_enabled(e)
 
     # reject if the app is disabled hereafter
-    if not redis.is_alive():
+    if not redis.is_enabled():
         return reject(e)
 
     # help
@@ -80,7 +80,7 @@ def disable(e):
     if is_user_admin(e['user']):
         # only for admin
         redis.disable()
-        logger.error(f"Check bot disabled by {e['user']} - redis.is_alive(): {redis.is_alive()}")
+        logger.error(f"Check bot disabled by {e['user']} - redis.is_enabled(): {redis.is_enabled()}")
         message_text = f"{slack.mention(c.SLACK_CHECK_BOT_ID)} brought down " \
                        f"by {slack.mention(e['user'])} :disappointed:"
     else:
@@ -101,7 +101,7 @@ def enable(e):
     if is_user_admin(e['user']):
         # only for admin
         redis.enable()
-        logger.error(f"Check bot enabled by {e['user']} - redis.is_alive(): {redis.is_alive()}")
+        logger.error(f"Check bot enabled by {e['user']} - redis.is_enabled(): {redis.is_enabled()}")
         message_text = f"{slack.mention(c.SLACK_CHECK_BOT_ID)} back alive " \
                        f"by {slack.mention(e['user'])} :tada:"
     else:
@@ -127,9 +127,9 @@ def reject(e):
     return e
 
 
-# is alive
-def is_alive(e):
-    if redis.is_alive():
+# is enabled
+def is_enabled(e):
+    if redis.is_enabled():
         status_by_emoji = ":man-gesturing-ok:"
     else:
         status_by_emoji = ":man-gesturing-no:"

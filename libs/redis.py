@@ -32,11 +32,11 @@ def generate_key(channel_id, user_id):
     return f"{channel_id}:{now.year}:{now.month:02d}:{user_id}"
 
 
-# return if the app is alive
-def is_alive():
+# return if the app is enabled
+def is_enabled():
     enabled = r.get(config_key_enabled())
-    logger.info(f"is_alive: {enabled}")
-    if enabled != 0:
+    logger.info(f"is_enabled: {enabled}")
+    if enabled != "False":
         return True  # includes the value never set
     else:
         return False
@@ -44,12 +44,12 @@ def is_alive():
 
 # enable the app
 def enable():
-    r.set(config_key_enabled(), 1)
+    r.set(config_key_enabled(), "True")
 
 
 # disable the app
 def disable():
-    r.set(config_key_enabled(), 0)
+    r.set(config_key_enabled(), "False")
 
 
 def config_key_enabled():
