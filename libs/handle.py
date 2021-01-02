@@ -7,8 +7,8 @@ KEYWORDS_MARK = ["done", "Done", "DONE", "인증"]
 KEYWORDS_STATUS = ["status", "Status", "STATUS", "현황"]
 KEYWORDS_CANCEL = ["cancel", "Cancel", "CANCEL", "취소"]
 KEYWORDS_HELP = ["help", "Help", "HELP"]
-KEYWORDS_DISABLE = ["disable"]
-KEYWORDS_ENABLE = ["enable"]
+KEYWORDS_DISABLE = ["이건아니지"]
+KEYWORDS_ENABLE = ["아브라카다브라"]
 
 
 def event(e):
@@ -76,7 +76,8 @@ def disable(e):
         # only for admin
         c.CHECK_BOT_APP_ENABLED = False
         logger.error(f"Check bot disabled by {e['user']}")
-        message_text = f"{slack.mention(e['user'])} disabled :disappointed:"
+        message_text = f"{slack.mention(c.SLACK_CHECK_BOT_ID)} brought down " \
+                       f"by {slack.mention(e['user'])} :disappointed:"
     else:
         # restrict others
         logger.error(f"Check bot disable request by {e['user']} rejected")
@@ -95,7 +96,8 @@ def enable(e):
         # only for admin
         c.CHECK_BOT_APP_ENABLED = True
         logger.error(f"Check bot enabled by {e['user']}")
-        message_text = f"{slack.mention(e['user'])} enabled :tada:"
+        message_text = f"{slack.mention(c.SLACK_CHECK_BOT_ID)} back alive " \
+                       f"by {slack.mention(e['user'])} :tada:"
     else:
         # restrict others
         logger.error(f"Check bot enable request by {e['user']} rejected")
