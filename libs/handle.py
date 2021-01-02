@@ -93,6 +93,7 @@ def disable(e):
         "channel": e['channel'],
         "text": message_text
     })
+    return e
 
 
 # enable the app
@@ -113,6 +114,7 @@ def enable(e):
         "channel": e['channel'],
         "text": message_text
     })
+    return e
 
 
 # reject if the app is disabled
