@@ -1,13 +1,15 @@
-import requests
 import config as c
+import requests
 from libs import logger
 
 
 # send a message to Slack
+# https://api.slack.com/docs/rate-limits#rate-limits__limits-when-posting-messages
+# In general, apps may post no more than one message per second per channel
 def send_message(message):
     try:
         response = requests.post(
-            url=c.SLACK_API_URL,
+            url=c.SLACK_API_CHAT_POST_MESSAGE_URL,
             json=message,
             headers={
                 "Authorization": c.SLACK_APP_TOKEN,
