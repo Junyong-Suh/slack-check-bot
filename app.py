@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from libs import setup, logger, handle, redis
+from libs import setup, logger, handle
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)

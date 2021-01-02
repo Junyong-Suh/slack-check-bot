@@ -231,8 +231,7 @@ def is_message_subtype_message_deleted(e):
 
 # progress percent
 def progress_percent(count):
-    now = datetime.now()
-    percent = round(int(count) / int(now.day) * 100, 2)
+    percent = round(int(count) / int(21) * 100, 2)
     if int(count) == 1:
         return f"{count} time ({percent}%)"
     else:
