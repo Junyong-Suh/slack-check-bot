@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-from libs import setup, logger, handle, slack
+from libs import setup, logger, handle
 from flask import Flask, request, jsonify
-from rq import Queue
-from worker import conn
 
 app = Flask(__name__)
-q = Queue(connection=conn)
 
 
 @app.before_first_request
@@ -17,17 +14,6 @@ def initialize():
 def index():
     logger.info('Hello World!')
     return jsonify('Hello World!')
-
-
-@app.route('/worker', methods=['GET'])
-def worker():
-    message = {
-        "channel": "G01H6SBNCQ5",
-        "text": "test message to worker"
-    }
-    # slack.send_message(message)
-    q.enqueue(slack.send_message, message)
-    return jsonify('queued')
 
 
 # handles Slack's challenge

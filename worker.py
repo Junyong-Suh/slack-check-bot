@@ -9,6 +9,6 @@ conn = redis_heroku.from_url(redis_url)
 
 if __name__ == '__main__':
     with Connection(conn):
-        setup.setup_credentials()
+        setup.setup_credentials()  # inject env variables
         worker = Worker(map(Queue, listen))
         worker.work()

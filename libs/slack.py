@@ -1,13 +1,19 @@
 import config as c
 import requests
-from libs import logger
+from libs import logger, queue
+
+
+# actually, queue a message to be sent by worker
+def send_message(message):
+    logger.info(f"Queue a message: {message}")
+    queue.enqueue(message)
 
 
 # send a message to Slack
 # https://api.slack.com/docs/rate-limits#rate-limits__limits-when-posting-messages
 # In general, apps may post no more than one message per second per channel
-def send_message(message):
-    # ToDo: Let post message to Slack ONCE per minute per channel to avoid rate limit using Redis
+# ToDo: Let post message to Slack ONCE per minute per channel to avoid rate limit using Redis
+def chat_post_message(message):
     try:
         response = requests.post(
             url=c.SLACK_API_CHAT_POST_MESSAGE_URL,
