@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.before_first_request
 def initialize():
-    setup.setup_credentials()
+    setup.credentials()
 
 
 @app.route('/', methods=['GET'])

@@ -3,7 +3,7 @@ import os
 
 
 # inject env variables
-def setup_credentials():
+def credentials():
     if 'SLACK_APP_TOKEN' in os.environ:
         c.SLACK_APP_TOKEN = f"Bearer {os.environ['SLACK_APP_TOKEN']}"
     if 'SLACK_CHECK_BOT_ID' in os.environ:
