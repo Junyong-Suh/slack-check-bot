@@ -7,7 +7,7 @@ def disable(e):
     if is_admin(e['user']):
         # only for admin
         redis.disable()
-        logger.error(f"Check bot disabled by {e['user']} - redis.is_enabled(): {redis.is_enabled()}")
+        logger.error(f"Check bot disabled by {e['user']} - redis.is_app_enabled(): {redis.is_app_enabled()}")
         message_text = f"{slack.mention(c.SLACK_CHECK_BOT_ID)} brought down " \
                        f"by {slack.mention(e['user'])} :disappointed:"
     else:
@@ -28,7 +28,7 @@ def enable(e):
     if is_admin(e['user']):
         # only for admin
         redis.enable()
-        logger.error(f"Check bot enabled by {e['user']} - redis.is_enabled(): {redis.is_enabled()}")
+        logger.error(f"Check bot enabled by {e['user']} - redis.is_app_enabled(): {redis.is_app_enabled()}")
         message_text = f"{slack.mention(c.SLACK_CHECK_BOT_ID)} back alive " \
                        f"by {slack.mention(e['user'])} :tada:"
     else:
@@ -46,7 +46,7 @@ def enable(e):
 
 # whether the app is enabled
 def is_enabled(e):
-    if redis.is_enabled():
+    if redis.is_app_enabled():
         status_by_emoji = ":man-gesturing-ok:"
     else:
         status_by_emoji = ":man-gesturing-no:"

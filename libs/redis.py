@@ -33,7 +33,7 @@ def generate_key(channel_id, user_id):
 
 
 # return if the app is enabled
-def is_enabled():
+def is_app_enabled():
     enabled = r.get(config_key_enabled())
     logger.info(f"is_enabled: {enabled}")
     if enabled != "False":

@@ -24,7 +24,7 @@ def event(e):
         return e
 
     # reject if the app is disabled hereafter
-    if not redis.is_enabled():
+    if not redis.is_app_enabled():
         return reject(e)
 
     # General Commands (rejected if the app is disabled)
