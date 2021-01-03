@@ -21,13 +21,13 @@ def send_message(message):
         logger.info(response.json())
         return response
     except requests.exceptions.HTTPError as errh:
-        print("Http Error: ", errh)
+        logger.error("Http Error: ", errh)
     except requests.exceptions.ConnectionError as errc:
-        print("Error Connecting: ", errc)
+        logger.error("Error Connecting: ", errc)
     except requests.exceptions.Timeout as errt:
-        print("Timeout Error: ", errt)
+        logger.error("Timeout Error: ", errt)
     except requests.exceptions.RequestException as err:
-        print("Error: ", err)
+        logger.error("Error: ", err)
 
 
 def mention(user_id):
