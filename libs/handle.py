@@ -1,5 +1,5 @@
 import config as c
-from libs import logger, admin, redis, slack, utils as u
+from libs import admin, redis, slack, utils as u
 
 
 KEYWORDS_MARK = ["done", "Done", "DONE", "인증", "ㅇㅈ"]
