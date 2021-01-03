@@ -71,6 +71,10 @@ def get_app_mention_text(e):
             logger.info(f"Message deleted: {e}")
             return e, False
 
+        if is_message_with_no_subtype(e):
+            logger.info(f"Message in general: {e}")
+            return e, False
+
     logger.error(f"Unexpected event: {e}")
     return e, False
 
@@ -227,6 +231,10 @@ def is_message_subtype_message_changed(e):
 
 def is_message_subtype_message_deleted(e):
     return 'subtype' in e and e['subtype'] == 'message_deleted'
+
+
+def is_message_with_no_subtype(e):
+    return not ('subtype' in e)
 
 
 # progress percent
