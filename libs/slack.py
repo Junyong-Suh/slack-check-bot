@@ -33,7 +33,7 @@ def chat_post_message(message):
     except requests.exceptions.Timeout as errt:
         logger.error(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
-        logger.error(f"Error: {err.}")
+        logger.error(f"Error: {err}")
 
 
 def mention(user_id):
