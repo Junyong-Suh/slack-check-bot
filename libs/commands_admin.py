@@ -44,6 +44,21 @@ def enable(e):
     return e
 
 
+# whether the app is enabled
+def is_enabled(e):
+    if redis.is_enabled():
+        status_by_emoji = ":man-gesturing-ok:"
+    else:
+        status_by_emoji = ":man-gesturing-no:"
+
+    message = {
+        "channel": e['channel'],
+        "text": f"Is {slack.mention(c.SLACK_CHECK_BOT_ID)} alive? :arrow_right: {status_by_emoji}"
+    }
+    slack.send_message(message)
+    return e
+
+
 def is_admin(user):
     logger.info(f"Current admins: {c.ADMIN_SLACK_IDS}")
     return user in c.ADMIN_SLACK_IDS

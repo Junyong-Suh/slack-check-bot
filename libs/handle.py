@@ -1,5 +1,4 @@
-import config as c
-from libs import admin, redis, slack, utils as u
+from libs import commands_admin, commands_general, redis, slack, utils as u
 
 
 KEYWORDS_MARK = ["done", "Done", "DONE", "인증", "ㅇㅈ"]
@@ -11,50 +10,69 @@ KEYWORDS_ENABLE = ["돌아와줘"]
 KEYWORDS_IS_ENABLED = ["살아있니"]
 
 
+# handle only associated event
 def event(e):
-    event_text, ok = u.get_app_mention_text(e)
+    event_text, should_process = u.get_app_mention_text(e)
 
     # do nothing if app mention text is not available
-    if not ok:
+    if not should_process:
         return e
 
-    # Admin Commands (check regardless of app enabled or not)
-
-    # disable the app - emergency stop
-    if any(tag in event_text for tag in KEYWORDS_DISABLE):
-        return admin.disable(e)
-
-    # enable the app
-    if any(tag in event_text for tag in KEYWORDS_ENABLE):
-        return admin.enable(e)
-
-    # enable the app
-    if any(tag in event_text for tag in KEYWORDS_IS_ENABLED):
-        return is_enabled(e)
-
-    # General Commands (reject if the app is not enabled)
+    # Admin Commands (process although the app is disabled)
+    e, is_processed = admin_commands(e, event_text)
+    if is_processed:
+        return e
 
     # reject if the app is disabled hereafter
     if not redis.is_enabled():
         return reject(e)
 
+    # General Commands (rejected if the app is disabled)
+    e, is_processed = general_commands(e, event_text)
+    if is_processed:
+        return e
+
+    return e
+
+
+# Admin Commands (process although the app is disabled)
+def admin_commands(e, event_text):
+    # disable the app - emergency stop
+    if any(tag in event_text for tag in KEYWORDS_DISABLE):
+        return commands_admin.disable(e), True
+
+    # enable the app
+    if any(tag in event_text for tag in KEYWORDS_ENABLE):
+        return commands_admin.enable(e), True
+
+    # whether the app is enabled
+    if any(tag in event_text for tag in KEYWORDS_IS_ENABLED):
+        return commands_admin.is_enabled(e), True
+
+    # not processed
+    return e, False
+
+
+# General Commands (rejected if the app is disabled)
+def general_commands(e, event_text):
     # help
     if any(tag in event_text for tag in KEYWORDS_HELP):
-        return usage(e)
+        return commands_general.usage(e), True
 
     # mark
     if any(tag in event_text for tag in KEYWORDS_MARK):
-        return mark(e)
+        return commands_general.mark(e), True
 
     # status
     if any(tag in event_text for tag in KEYWORDS_STATUS):
-        return status(e)
+        return commands_general.status(e), True
 
     # cancel
     if any(tag in event_text for tag in KEYWORDS_CANCEL):
-        return cancel(e)
+        return commands_general.cancel(e), True
 
-    return e
+    # not processed
+    return e, False
 
 
 # reject if the app is disabled
@@ -62,90 +80,6 @@ def reject(e):
     message = {
         "channel": e['channel'],
         "text": "The app is disabled by admin :pray: - please contact admins"
-    }
-    slack.send_message(message)
-    return e
-
-
-# is enabled
-def is_enabled(e):
-    if redis.is_enabled():
-        status_by_emoji = ":man-gesturing-ok:"
-    else:
-        status_by_emoji = ":man-gesturing-no:"
-
-    message = {
-        "channel": e['channel'],
-        "text": f"Is {slack.mention(c.SLACK_CHECK_BOT_ID)} alive? :arrow_right: {status_by_emoji}"
-    }
-    slack.send_message(message)
-    return e
-
-
-# help commands
-def usage(e):
-    message = {
-        "channel": e['channel'],
-        "text": f"Mention me with any keyword in "
-                f"['done', 'cancel', 'status', 'help', '인증', 'ㅇㅈ', '취소', 'ㅊㅅ', '현황'] "
-                f":wave:"
-    }
-    slack.send_message(message)
-    return e
-
-
-# increase the count
-def mark(e):
-    count = redis.mark(e['channel'], e['user'])
-    message = {
-        "channel": e['channel'],
-        "text": f"{slack.mention(e['user'])} marked "
-                f"{u.progress_percent(count)} this month :white_check_mark:"
-    }
-    slack.send_message(message)
-    return e
-
-
-# get the count
-def status(e):
-    count = redis.status(e['channel'], e['user'])
-
-    # no status
-    if int(count) < 1:
-        return reset(e)
-
-    message = {
-        "channel": e['channel'],
-        "text": f"{slack.mention(e['user'])} marked "
-                f"{u.progress_percent(count)} this month so far :thumbsup:"
-    }
-    slack.send_message(message)
-    return e
-
-
-# decrease the count
-def cancel(e):
-    count = redis.cancel(e['channel'], e['user'])
-
-    # can't go negative, reset
-    if int(count) < 0:
-        return reset(e)
-
-    message = {
-        "channel": e['channel'],
-        "text": f"{slack.mention(e['user'])} last mark canceled - "
-                f"{u.progress_percent(count)} marked this month :wink:"
-    }
-    slack.send_message(message)
-    return e
-
-
-# reset the status
-def reset(e):
-    redis.reset(e['channel'], e['user'])
-    message = {
-        "channel": e['channel'],
-        "text": f"{slack.mention(e['user'])} wait, you never done any yet :smirk:"
     }
     slack.send_message(message)
     return e
