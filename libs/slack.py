@@ -27,13 +27,13 @@ def chat_post_message(message):
         logger.info(response.json())
         return response
     except requests.exceptions.HTTPError as errh:
-        logger.error("Http Error: ", errh)
+        logger.error(f"Http Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
-        logger.error("Error Connecting: ", errc)
+        logger.error(f"Error Connecting: {errc}")
     except requests.exceptions.Timeout as errt:
-        logger.error("Timeout Error: ", errt)
+        logger.error(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
-        logger.error("Error: ", err)
+        logger.error(f"Error: {err.}")
 
 
 def mention(user_id):
