@@ -4,7 +4,11 @@ import config as c
 import os
 import redis as redis_heroku
 
-r = redis_heroku.from_url(os.environ.get("REDIS_URL"), charset="utf-8", decode_responses=True)
+r = redis_heroku.from_url(
+    os.environ.get("REDIS_URL", "redis://127.0.0.1:6379"),
+    charset="utf-8",
+    decode_responses=True
+)
 
 
 # increase by one
@@ -54,3 +58,8 @@ def disable():
 
 def config_key_enabled():
     return f"{c.SLACK_CHECK_BOT_ID}:config:enabled"
+
+
+# returns None if key already exists
+def set_with_expire_if_not_exist(key, value, expire_in_sec):
+    return r.set(key, value, ex=expire_in_sec, nx=True)

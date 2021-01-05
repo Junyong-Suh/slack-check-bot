@@ -1,10 +1,25 @@
-from libs import logger
+from libs import logger, redis
+import hashlib
+
+ONE_MIN_IN_SECONDS = 60
+
+
+# until the dyno being idle after an hour of inactivity is resolved,
+# store the message in Redis for a minute and ignore if duplicated
+def is_processed_within_a_minute(message):
+    k = hashlib.sha256(message.encode('utf-8')).hexdigest()  # hash of the message
+    return redis.set_with_expire_if_not_exist(k, 1, ONE_MIN_IN_SECONDS) is None
 
 
 # handles different types of event
 def get_app_mention_text(e):
     # app_mention: https://gist.github.com/Junyong-Suh/94fc948c8c1f7819a258101a23f169aa
     if is_event_type_app_mention(e) and 'text' in e:
+        # until the dyno being idle after an hour of inactivity is resolved,
+        # store the message in Redis for a minute and ignore if duplicated
+        if is_processed_within_a_minute(e['text']):
+            logger.error(f"The same message processed in {ONE_MIN_IN_SECONDS} seconds, ignoring: {e}")
+            return e['text'], False
         return e['text'], True
 
     if is_event_type_message(e):
