@@ -3,3 +3,4 @@ requests
 gunicorn==19.9.0
 redis
 rq
+newrelic
